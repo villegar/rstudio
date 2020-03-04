@@ -9,7 +9,7 @@ LABEL name="rstudio" \
 RUN apt-get update -y && \
     apt-get install -y libpng-dev && \
     apt-get install -y libjpeg-dev && \
-    apt-get install -y libcurl4-openssl-dev 
+    apt-get install -y libcurl4-openssl-dev
 RUN apt-get install -y software-properties-common
 RUN add-apt-repository ppa:deadsnakes/ppa
 RUN apt-get install -y python3.7 && \
@@ -19,7 +19,8 @@ RUN apt-get install -y python3.7 && \
 RUN apt-get clean -y
 
 # Install additional R packages
-RUN R -e 'install.packages("jpeg",repos="http://cran.rstudio.com")'
+RUN R -e 'install.packages("jpeg", repos="http://cran.us.r-project.org")'
+RUN R -e 'install.packages("RCurl", repos="http://cran.us.r-project.org")'
 RUN R -e 'if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager",repos="http://cran.rstudio.com")'
 RUN R -e 'BiocManager::install("dada2")'
 
