@@ -8,7 +8,8 @@ LABEL name="rstudio" \
 # Install additional system packages
 RUN apt-get update -y && \
     apt-get install -y libpng-dev && \
-    apt-get install -y libjpeg-dev
+    apt-get install -y libjpeg-dev && \
+    apt-get install -y libcurl4-openssl-dev 
 RUN apt-get install -y software-properties-common
 RUN add-apt-repository ppa:deadsnakes/ppa
 RUN apt-get install -y python3.7 && \
@@ -23,10 +24,10 @@ RUN R -e 'if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages
 RUN R -e 'BiocManager::install("dada2")'
 
 # Install additional Python packages
-RUN wget https://bootstrap.pypa.io/get-pip.py
-RUN python get-pip.py
-RUN pip3 install --upgrade pip
-RUN pip3 install torch torchvision
+RUN wget -q https://bootstrap.pypa.io/get-pip.py
+RUN python get-pip.py && rm get-pip.py
+#RUN pip3 install --upgrade pip
+#RUN pip3 install torch torchvision
 
 # Expose port 8787
 #EXPOSE 8787
