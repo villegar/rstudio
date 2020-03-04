@@ -1,4 +1,4 @@
-FROM rstudio/r-session-complete:centos7-1.2.5033-1
+FROM rocker/verse:3.6.2
 
 # Identify the maintainer of an image
 LABEL name="rstudio" \
@@ -6,21 +6,30 @@ LABEL name="rstudio" \
     maintainer="Roberto.VillegasDiaz@sdstate.edu"
 
 # Install additional system packages
-RUN yum update -y && \
-    yum install -y \
-    libjpeg-turbo-official && \
-    yum clean all
+RUN apt-get update -y && \
+    apt-get install -y libpng-dev && \
+    apt-get install -y libjpeg-dev
+RUN apt-get install -y software-properties-common
+RUN add-apt-repository ppa:deadsnakes/ppa
+RUN apt-get install -y python3.7 && \
+    apt-get upgrade -y python3-setuptools && \
+    apt-get install -y python3-pip && \
+    apt-get install -y python3-wheel
+RUN apt-get clean -y
 
 # Install additional R packages
-RUN /opt/R/${R_VERSION}/bin/R -e 'install.packages("jpeg",repos="http://cran.rstudio.com")'
-RUN /opt/R/${R_VERSION}/bin/R -e 'if (!requireNamespace("BiocManager", quietly = TRUE)); install.packages("BiocManager")'
-RUN /opt/R/${R_VERSION}/bin/R -e 'BiocManager::install("dada2")'
+RUN R -e 'install.packages("jpeg",repos="http://cran.rstudio.com")'
+RUN R -e 'if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager",repos="http://cran.rstudio.com")'
+RUN R -e 'BiocManager::install("dada2")'
 
 # Install additional Python packages
-RUN /opt/python/${PYTHON_VERSION}/bin/pip install pytorch
+RUN wget https://bootstrap.pypa.io/get-pip.py
+RUN python get-pip.py
+RUN pip3 install --upgrade pip
+RUN pip3 install torch torchvision
 
-# Expose port 8082
-#EXPOSE 8082
+# Expose port 8787
+#EXPOSE 8787
 
 # Download latest version from the repository
 #RUN git clone https://github.com/gmod/jbrowse
